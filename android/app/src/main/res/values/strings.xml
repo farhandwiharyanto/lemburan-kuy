@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Lemburan-Kuy</string>
+    <string name="title_activity_main">Lemburan-Kuy</string>
+    <string name="package_name">com.lemburankuy.app</string>
+    <string name="custom_url_scheme">com.lemburankuy.app</string>
+</resources>
