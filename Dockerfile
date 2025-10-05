@@ -1,6 +1,6 @@
 FROM php:8.3-cli
 
-# Install system dependencies
+# Install system dependencies dan extensions
 RUN apt-get update && apt-get install -y \
     libzip-dev \
     libfreetype-dev \
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd zip mbstring xml
+    && docker-php-ext-install -j$(nproc) gd zip mbstring xml pdo pdo_mysql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -20,8 +20,15 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev --no-interaction
+# Install dependencies tanpa menjalankan Laravel scripts
+RUN composer install --optimize-autoloader --no-dev --no-scripts --no-interaction
+
+# Generate autoloader tanpa artisan commands
+RUN composer dump-autoload --optimize
+
+# Clear cache dan optimize (jika perlu)
+RUN php artisan config:cache || true
+RUN php artisan route:cache || true
 
 # Expose port
 EXPOSE 8000
