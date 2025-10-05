@@ -72,4 +72,38 @@ class AuthController extends Controller
             return redirect()->route('overtimes.index');
         }
     }
+    public function apiLogin(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Email atau password salah.'
+        ], 401);
+    }
+
+    $token = $user->createToken('mobile-app')->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'token' => $token,
+        'user' => $user
+    ]);
+}
+
+public function apiLogout(Request $request)
+{
+    $request->user()->currentAccessToken()->delete();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Logout berhasil'
+    ]);
+}
 }

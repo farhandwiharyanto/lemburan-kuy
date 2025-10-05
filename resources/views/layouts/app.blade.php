@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+        <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d6efd"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Lemburan-Kuy">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="manifest" href="/manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -20,6 +27,47 @@
         }
     </style>
 </head>
+<script>
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(registration) {
+        console.log('ServiceWorker registration successful');
+      })
+      .catch(function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+}
+
+// Prompt for PWA installation
+let deferredPrompt;
+const installButton = document.getElementById('installButton');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Show install button if needed
+  if (installButton) {
+    installButton.style.display = 'block';
+    installButton.addEventListener('click', installApp);
+  }
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted install');
+      }
+      deferredPrompt = null;
+    });
+  }
+}
+</script>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
