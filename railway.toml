@@ -3,7 +3,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [build.args]
-PHP_VERSION = "8.3"
+PHP_VERSION = "8.2"
 
 [deploy]
 startCommand = "php artisan serve --host=0.0.0.0 --port=$PORT"
